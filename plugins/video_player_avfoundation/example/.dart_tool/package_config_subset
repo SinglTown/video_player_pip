@@ -238,10 +238,6 @@ vector_math
 2.14
 file:///Users/mac/.pub-cache/hosted/pub.flutter-io.cn/vector_math-2.1.4/
 file:///Users/mac/.pub-cache/hosted/pub.flutter-io.cn/vector_math-2.1.4/lib/
-video_player_platform_interface
-3.4
-file:///Users/mac/.pub-cache/hosted/pub.flutter-io.cn/video_player_platform_interface-6.3.0/
-file:///Users/mac/.pub-cache/hosted/pub.flutter-io.cn/video_player_platform_interface-6.3.0/lib/
 vm_service
 3.3
 file:///Users/mac/.pub-cache/hosted/pub.flutter-io.cn/vm_service-15.0.0/
@@ -286,6 +282,10 @@ video_player_example
 3.4
 file:///Users/mac/Downloads/video_player-pip/plugins/video_player_avfoundation/example/
 file:///Users/mac/Downloads/video_player-pip/plugins/video_player_avfoundation/example/lib/
+video_player_platform_interface
+3.4
+file:///Users/mac/Downloads/video_player-pip/plugins/video_player_platform_interface/
+file:///Users/mac/Downloads/video_player-pip/plugins/video_player_platform_interface/lib/
 sky_engine
 3.7
 file:///Users/mac/fvm/versions/3.32.2/bin/cache/pkg/sky_engine/
