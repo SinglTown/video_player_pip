@@ -293,6 +293,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       [self updateRate];
     } else {
       [_player play];
+      [self settupPip];
     }
   } else {
     [_player pause];
@@ -507,6 +508,25 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [currentItem removeObserver:self forKeyPath:@"duration"];
   [currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
   [_player removeObserver:self forKeyPath:@"rate"];
+}
+
+-(void)settupPip{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (AVPictureInPictureController.isPictureInPictureSupported) {
+            NSLog(@"AVPlayerItemStatusReadyToPlay===支持画中画");
+            self.controller = [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
+            self.controller.delegate = self;
+            if (@available(iOS 14.2, *)) {
+                self.controller.canStartPictureInPictureAutomaticallyFromInline = YES;
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+    });
+}
+-(void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController failedToStartPictureInPictureWithError:(NSError *)error
+{
+    NSLog(@"failedToStartPictureInPictureWithError=%@",error);
 }
 
 @end

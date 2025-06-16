@@ -95,7 +95,7 @@
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, nil);
 }
 
-- (int64_t)onPlayerSetup:(FVPVideoPlayer *)player {
+- (int64_t)onPlayerSetup:(FVPVideoPlayer *)player options:(nonnull FVPCreationOptions *)options{
   FVPTextureBasedVideoPlayer *textureBasedPlayer =
       [player isKindOfClass:[FVPTextureBasedVideoPlayer class]]
           ? (FVPTextureBasedVideoPlayer *)player
@@ -105,6 +105,7 @@
   if (textureBasedPlayer) {
     playerIdentifier = [self.registry registerTexture:(FVPTextureBasedVideoPlayer *)player];
     [textureBasedPlayer setTextureIdentifier:playerIdentifier];
+      [textureBasedPlayer setTexturePlayerFrame:options.rect];
   } else {
     playerIdentifier = self.nextNonTexturePlayerIdentifier--;
   }
@@ -183,7 +184,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
       return nil;
     }
 
-    return @([self onPlayerSetup:player]);
+    return @([self onPlayerSetup:player options:options]);
   } @catch (NSException *exception) {
     *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
     return nil;
@@ -265,7 +266,11 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
   player.isLooping = isLooping;
 }
-
+- (void)setRect:(CGRect)rect forPlayer:(NSInteger)playerIdentifier error:(FlutterError * _Nullable __autoreleasing *)error
+{
+    FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
+    [player setTexturePlayerFrame:rect];
+}
 - (void)setVolume:(double)volume
         forPlayer:(NSInteger)playerIdentifier
             error:(FlutterError **)error {

@@ -83,6 +83,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       httpHeaders: httpHeaders,
       formatHint: formatHint,
       viewType: _platformVideoViewTypeFromVideoViewType(viewType),
+      rect: dataSource.rect
     );
 
     final int playerId = await _api.create(pigeonCreationOptions);
@@ -115,6 +116,12 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   Future<void> setVolume(int playerId, double volume) {
     return _api.setVolume(volume, playerId);
   }
+
+  @override
+  Future<void> setRect(int playerId, Rect rect) {
+    return _api.setRect(playerId,rect);
+  }
+
 
   @override
   Future<void> setPlaybackSpeed(int playerId, double speed) {

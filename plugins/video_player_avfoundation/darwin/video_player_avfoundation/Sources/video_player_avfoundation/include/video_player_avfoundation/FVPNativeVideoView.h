@@ -12,6 +12,9 @@
 #import <Flutter/Flutter.h>
 #endif
 
+@interface FVPPlayerView : UIView
+@end
+
 /// A class used to create a native video view that can be embedded in a Flutter app.
 /// This class wraps an AVPlayer instance and displays its video content.
 #if TARGET_OS_IOS
@@ -22,4 +25,7 @@
 /// Initializes a new instance of a native view.
 /// It creates a video view instance and sets the provided AVPlayer instance to it.
 - (instancetype)initWithPlayer:(AVPlayer *)player;
+
+@property(nonatomic) FVPPlayerView *playerView;
+
 @end

@@ -35,8 +35,11 @@ class _App extends StatelessWidget {
               onPressed: () {
                 Navigator.push<_PlayerVideoAndPopPage>(
                   context,
+                  // MaterialPageRoute<_PlayerVideoAndPopPage>(
+                  //   builder: (BuildContext context) => _PlayerVideoAndPopPage(),
+                  // ),
                   MaterialPageRoute<_PlayerVideoAndPopPage>(
-                    builder: (BuildContext context) => _PlayerVideoAndPopPage(),
+                    builder: (BuildContext context) => MediaFlowVideoPage(),
                   ),
                 );
               },
@@ -310,21 +313,43 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
       Uri.parse(
           'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
       closedCaptionFile: _loadCaptions(),
-      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-      viewType: widget.viewType,
+      videoPlayerOptions: VideoPlayerOptions(
+          mixWithOthers: true,
+          allowBackgroundPlayback: true
+      ),
+      viewType: VideoViewType.textureView,
+        rect: Rect.fromLTWH(0, 100, 350, 350/1.777),
+        // rect: Rect.fromLTWH(20, 309, 350, 350/1.777)
     );
 
     _controller.addListener(() {
       setState(() {});
     });
     _controller.setLooping(true);
-    _controller.initialize();
+    _controller.initialize().then((value){
+      changeRect();
+    });
   }
-
+  GlobalKey playerKey = GlobalKey();
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  changeRect(){
+    final RenderBox? box = playerKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null) {
+      return;
+    }
+    final Offset offset = box.localToGlobal(Offset.zero);
+    print('offset====$offset');
+    print('width====${MediaQuery.of(context).size.width}');
+    print('height====${MediaQuery.of(context).size.width/_controller.value.aspectRatio}');
+    print('totalHeight====${MediaQuery.of(context).size.height}');
+    print('aspectRatio====${_controller.value.aspectRatio}');
+
+    _controller.setRect(Rect.fromLTWH(offset.dx, offset.dy, MediaQuery.of(context).size.width-offset.dx*2, MediaQuery.of(context).size.width/_controller.value.aspectRatio));
   }
 
   @override
@@ -341,7 +366,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               child: Stack(
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
-                  VideoPlayer(_controller),
+                  VideoPlayer(key: playerKey,_controller),
                   ClosedCaption(text: _controller.value.caption.text),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
@@ -522,6 +547,139 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
               return const Text('waiting for video to load');
             }
           },
+        ),
+      ),
+    );
+  }
+}
+
+class MediaFlowVideoPage extends StatefulWidget {
+  const MediaFlowVideoPage({Key? key}) : super(key: key);
+  @override
+  State<MediaFlowVideoPage> createState() => _MediaFlowVideoPageState();
+}
+
+class _MediaFlowVideoPageState extends State<MediaFlowVideoPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: PageView(
+        scrollDirection: Axis.vertical,
+        children: [
+          MediaVideoItem(key: ValueKey(0),url: "https://video-mediaxbase.testx.fzyun.cn/founder/mediax/media/202407/23/51c20d47e5896736432d481b.mp4",),
+          MediaVideoItem(key: ValueKey(1),url: "https://video-mediaxbase.testx.fzyun.cn/founder/mediax/media/202504/03/51c23b4f81b69029dbf03bb3.mp4",),
+          MediaVideoItem(key: ValueKey(2),url: "https://video-mediaxbase.testx.fzyun.cn/founder/mediax/media/202504/03/51c2134757af7494de92abd2.mp4",)
+        ],
+      ),
+    );
+  }
+}
+
+class MediaVideoItem extends StatefulWidget {
+  final String url;
+  const MediaVideoItem({Key? key,required this.url}) : super(key: key);
+
+  @override
+  State<MediaVideoItem> createState() => _MediaVideoItemState();
+}
+
+class _MediaVideoItemState extends State<MediaVideoItem> {
+
+  late final VideoPlayerController _controller;
+
+  bool isPlay = false;
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  GlobalKey playerKey = GlobalKey();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    _controller.dispose();
+  }
+
+  void init() async {
+    try {
+
+      // Create the controller
+      _controller = VideoPlayerController.networkUrl(
+          Uri.parse(widget.url),
+          viewType: VideoViewType.textureView,
+          videoPlayerOptions: VideoPlayerOptions(
+              allowBackgroundPlayback: true,
+          ),
+          rect: Rect.fromLTWH(0, 200, 320, 100)
+      );
+
+      // Initialize the PipController
+      // await _controller.initialize();
+
+
+      print('_controller.value.aspectRatio===${_controller.value.aspectRatio}');
+
+      // await _controller.play();
+
+    } catch (e) {
+      print(e);
+
+    }
+  }
+
+  @override
+  void deactivate() {
+    // TODO: implement deactivate
+    super.deactivate();
+
+    _controller.pause();
+  }
+
+  setup() async{
+    await _controller.initialize();
+    await _controller.play();
+
+    final RenderBox? box = playerKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null) {
+      return;
+    }
+    final Offset offset = box.localToGlobal(Offset.zero);
+    print('offset====$offset');
+    print('width====${MediaQuery.of(context).size.width}');
+    print('height====${MediaQuery.of(context).size.width/_controller.value.aspectRatio}');
+    print('totalHeight====${MediaQuery.of(context).size.height}');
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SafeArea(
+        child: GestureDetector(
+          onTap: (){
+            _controller.value.isPlaying ? _controller.pause() : _controller.play();
+          },
+          child: Container(
+            // width: MediaQuery.of(context).size.width,
+            // height: MediaQuery.of(context).size.height,
+              color: Colors.red,
+              // Use [Video] widget to display video output.
+              child: FutureBuilder(
+                future: setup(),
+                builder: (c,nap){
+                  return AspectRatio(
+                    key: playerKey,
+                    aspectRatio: _controller.value.aspectRatio,
+                    child: VideoPlayer(_controller),
+                  );
+                },
+              )
+          ),
         ),
       ),
     );

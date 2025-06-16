@@ -6,8 +6,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-@interface FVPPlayerView : UIView
-@end
+
 
 @implementation FVPPlayerView
 + (Class)layerClass {
@@ -20,7 +19,7 @@
 @end
 
 @interface FVPNativeVideoView ()
-@property(nonatomic) FVPPlayerView *playerView;
+
 @end
 
 @implementation FVPNativeVideoView

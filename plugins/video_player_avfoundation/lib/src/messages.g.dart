@@ -65,6 +65,7 @@ class CreationOptions {
     this.formatHint,
     required this.httpHeaders,
     required this.viewType,
+    this.rect,
   });
 
   String? asset;
@@ -79,6 +80,8 @@ class CreationOptions {
 
   PlatformVideoViewType viewType;
 
+  Rect? rect;
+
   Object encode() {
     return <Object?>[
       asset,
@@ -87,6 +90,7 @@ class CreationOptions {
       formatHint,
       httpHeaders,
       viewType,
+      "${this.rect?.left},${this.rect?.top},${this.rect?.width},${this.rect?.height}"
     ];
   }
 
@@ -100,6 +104,7 @@ class CreationOptions {
       httpHeaders:
           (result[4] as Map<Object?, Object?>?)!.cast<String, String>(),
       viewType: result[5]! as PlatformVideoViewType,
+      rect: result[6]! as Rect
     );
   }
 }
@@ -268,6 +273,31 @@ class AVFoundationVideoPlayerApi {
     );
     final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
         .send(<Object?>[volume, playerId]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> setRect(int playerId,Rect rect) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setRect$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+    BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    String rectString = "${rect.left},${rect.top},${rect.width},${rect.height}";
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[rectString,playerId]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

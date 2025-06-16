@@ -30,7 +30,9 @@
                                          arguments:(FVPPlatformVideoViewCreationParams *)args {
   NSNumber *playerIdentifier = @(args.playerId);
   FVPVideoPlayer *player = self.playerByIdProvider(playerIdentifier);
-  return [[FVPNativeVideoView alloc] initWithPlayer:player.player];
+  FVPNativeVideoView *videoView = [[FVPNativeVideoView alloc] initWithPlayer:player.player];
+  player.playerLayer = (AVPlayerLayer *)videoView.playerView.layer;
+  return videoView;
 }
 
 - (NSObject<FlutterMessageCodec> *)createArgsCodec {

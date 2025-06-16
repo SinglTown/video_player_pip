@@ -44,13 +44,15 @@ typedef NS_ENUM(NSUInteger, FVPPlatformVideoViewType) {
                   packageName:(nullable NSString *)packageName
                    formatHint:(nullable NSString *)formatHint
                   httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
-                     viewType:(FVPPlatformVideoViewType)viewType;
+                     viewType:(FVPPlatformVideoViewType)viewType
+                     rect:(CGRect)rect;
 @property(nonatomic, copy, nullable) NSString *asset;
 @property(nonatomic, copy, nullable) NSString *uri;
 @property(nonatomic, copy, nullable) NSString *packageName;
 @property(nonatomic, copy, nullable) NSString *formatHint;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
 @property(nonatomic, assign) FVPPlatformVideoViewType viewType;
+@property(nonatomic, assign) CGRect rect;
 @end
 
 /// The codec used by all APIs.
@@ -67,6 +69,9 @@ NSObject<FlutterMessageCodec> *FVPGetMessagesCodec(void);
              error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setVolume:(double)volume
         forPlayer:(NSInteger)playerId
+            error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setRect:(CGRect)rect
+      forPlayer:(NSInteger)playerId
             error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setPlaybackSpeed:(double)speed
                forPlayer:(NSInteger)playerId

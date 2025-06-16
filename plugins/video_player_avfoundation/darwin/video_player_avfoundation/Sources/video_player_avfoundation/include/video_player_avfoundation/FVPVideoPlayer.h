@@ -10,6 +10,7 @@
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>
+#import <AVKit/AVKit.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -19,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// This class contains all functionalities needed to manage video playback in platform views and is
 /// typically used alongside FVPNativeVideoViewFactory. If you need to display a video using a
 /// texture, use FVPTextureBasedVideoPlayer instead.
-@interface FVPVideoPlayer : NSObject <FlutterStreamHandler>
+@interface FVPVideoPlayer : NSObject <FlutterStreamHandler,AVPictureInPictureControllerDelegate>
 /// The Flutter event channel used to communicate with the Flutter engine.
 @property(nonatomic) FlutterEventChannel *eventChannel;
 /// The AVPlayer instance used for video playback.
@@ -66,6 +67,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// Seeks to the specified location in the video and calls the completion handler when done, if one
 /// is supplied.
 - (void)seekTo:(int64_t)location completionHandler:(void (^_Nullable)(BOOL))completionHandler;
+
+@property(nonatomic, strong) AVPictureInPictureController * controller;
+@property(nonatomic) AVPlayerLayer *playerLayer;
+-(void)settupPip;
+-(void)setTexturePlayerFrame:(CGRect)frame;
+
 @end
 
 NS_ASSUME_NONNULL_END

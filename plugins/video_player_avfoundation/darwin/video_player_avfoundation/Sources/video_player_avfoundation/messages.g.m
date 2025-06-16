@@ -82,7 +82,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                   packageName:(nullable NSString *)packageName
                    formatHint:(nullable NSString *)formatHint
                   httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
-                     viewType:(FVPPlatformVideoViewType)viewType {
+                     viewType:(FVPPlatformVideoViewType)viewType
+                     rect:(CGRect)rect{
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
   pigeonResult.asset = asset;
   pigeonResult.uri = uri;
@@ -90,6 +91,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.formatHint = formatHint;
   pigeonResult.httpHeaders = httpHeaders;
   pigeonResult.viewType = viewType;
+  pigeonResult.rect = rect;
   return pigeonResult;
 }
 + (FVPCreationOptions *)fromList:(NSArray<id> *)list {
@@ -101,6 +103,10 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 4);
   FVPPlatformVideoViewTypeBox *boxedFVPPlatformVideoViewType = GetNullableObjectAtIndex(list, 5);
   pigeonResult.viewType = boxedFVPPlatformVideoViewType.value;
+    NSString *rect = GetNullableObjectAtIndex(list, 6);
+    NSLog(@"rect====%@",rect);
+    NSArray* rects = [rect componentsSeparatedByString:@","];
+    pigeonResult.rect = CGRectMake([rects[0] floatValue], [rects[1] floatValue], [rects[2] floatValue], [rects[3] floatValue]);
   return pigeonResult;
 }
 + (nullable FVPCreationOptions *)nullableFromList:(NSArray<id> *)list {
@@ -310,6 +316,35 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
       [channel setMessageHandler:nil];
     }
   }
+    {
+      FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+             initWithName:[NSString stringWithFormat:@"%@%@",
+                                                     @"dev.flutter.pigeon.video_player_avfoundation."
+                                                     @"AVFoundationVideoPlayerApi.setRect",
+                                                     messageChannelSuffix]
+          binaryMessenger:binaryMessenger
+                    codec:FVPGetMessagesCodec()];
+      if (api) {
+        NSCAssert([api respondsToSelector:@selector(setVolume:forPlayer:error:)],
+                  @"FVPAVFoundationVideoPlayerApi api (%@) doesn't respond to "
+                  @"@selector(setRect:)",
+                  api);
+        [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+          NSArray<id> *args = message;
+//            NSLog(@"GetNullableObjectAtIndex(args, 0)==%@",GetNullableObjectAtIndex(args, 0))
+          NSString *arg_rect = GetNullableObjectAtIndex(args, 0);
+            NSInteger arg_playerId = [GetNullableObjectAtIndex(args, 1) integerValue];
+          FlutterError *error;
+            NSLog(@"arg_rect====%@",arg_rect);
+            NSArray* rects = [arg_rect componentsSeparatedByString:@","];
+            CGRect cgRect = CGRectMake([rects[0] floatValue], [rects[1] floatValue], [rects[2] floatValue],[rects[3] floatValue]);
+          [api setRect:cgRect forPlayer:arg_playerId error:&error];
+          callback(wrapResult(nil, error));
+        }];
+      } else {
+        [channel setMessageHandler:nil];
+      }
+    }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",

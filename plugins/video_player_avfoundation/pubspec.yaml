@@ -25,9 +25,10 @@ dependencies:
   flutter:
     sdk: flutter
 #  video_player_platform_interface: ^6.3.0
+
+dependency_overrides:
   video_player_platform_interface:
     path: ../../plugins/video_player_platform_interface
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
