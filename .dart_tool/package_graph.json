@@ -10,6 +10,8 @@
         "flutter",
         "html",
         "video_player_android",
+        "video_player_avfoundation",
+        "video_player_platform_interface",
         "video_player_web"
       ],
       "devDependencies": [
@@ -18,19 +20,18 @@
       ]
     },
     {
+      "name": "video_player_avfoundation",
+      "version": "2.7.1",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "video_player_platform_interface",
       "version": "6.3.0",
       "dependencies": [
         "flutter",
         "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "video_player_avfoundation",
-      "version": "2.7.1",
-      "dependencies": [
-        "flutter",
-        "video_player_platform_interface"
       ]
     },
     {
